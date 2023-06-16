@@ -57,23 +57,21 @@ class App {
   }
 
   async initXR() {
-    // this.xr: WebXRDefaultExperience https://doc.babylonjs.com/typedoc/classes/babylon.webxrdefaultexperience
-    const sessionMode = 'immersive-vr'
-    this.xr = await this.scene.createDefaultXRExperienceAsync({ uiOptions: { sessionMode }});
-    const isSupported = await this.xr.baseExperience.sessionManager.isSessionSupportedAsync(sessionMode);
+    const sessionMode = 'immersive-vr';
+    // xr: WebXRDefaultExperience https://doc.babylonjs.com/typedoc/classes/babylon.webxrdefaultexperience
+    const xr = await this.scene.createDefaultXRExperienceAsync({ uiOptions: { sessionMode }});
+    const isSupported = await xr.baseExperience.sessionManager.isSessionSupportedAsync(sessionMode);
     if (!isSupported) {
-      alert('WebXR not supported')
+      alert('WebXR is not supported')
     } else {
       this.controllers = [];
-      // this.xr.input: WebXRInput https://doc.babylonjs.com/typedoc/classes/babylon.webxrinput
-      this.xr.input.onControllerAddedObservable.add(controller => {
+      // xr.input: WebXRInput https://doc.babylonjs.com/typedoc/classes/babylon.webxrinput
+      xr.input.onControllerAddedObservable.add(controller => {
         // controller: WebXRInputSource https://doc.babylonjs.com/typedoc/classes/babylon.webxrinputsource
         controller.userData = {trigger: { pressed: false, pressedPrev: false }};
         this.controllers.push(controller);
         controller.onMotionControllerInitObservable.add(motionController => {
           // motionController: WebXRAbstractMotionController https://doc.babylonjs.com/typedoc/classes/babylon.webxrabstractmotioncontroller
-          const ids = motionController.getComponentIds();
-          console.log(ids);
           const triggerComponent = motionController.getComponent('xr-standard-trigger');
           triggerComponent.onButtonStateChangedObservable.add(() => {
             controller.userData.trigger.pressed = triggerComponent.pressed;
